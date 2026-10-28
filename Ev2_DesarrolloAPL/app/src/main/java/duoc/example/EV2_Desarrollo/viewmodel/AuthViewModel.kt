@@ -41,8 +41,8 @@ class AuthViewModel : ViewModel() {
         passwordConfirm: String
     ) {
         val correoTrim = correo.trim()
-        val pass = password
-        val passConf = passwordConfirm
+        val pass = password.trim()
+        val passConf = passwordConfirm.trim()
 
         // Validaciones
         if (nombreCompleto.isBlank() || rut.isBlank() || correoTrim.isBlank()) {
