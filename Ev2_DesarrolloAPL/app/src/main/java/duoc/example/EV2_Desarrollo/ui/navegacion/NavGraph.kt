@@ -7,6 +7,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import duoc.example.EV2_Desarrollo.ui.CamaraFotos
 import duoc.example.EV2_Desarrollo.ui.auth.BienvenidaPantalla
 import duoc.example.EV2_Desarrollo.ui.auth.LoginPantalla
 import duoc.example.EV2_Desarrollo.ui.auth.RegistroPantalla
@@ -65,8 +66,12 @@ fun NavGraph() {
                 onIrListaLeyes = { navController.navigate(Rutas.ListaLeyes.ruta) },
                 onIrBusqueda = { navController.navigate(Rutas.Busqueda.ruta) },
                 onIrFavoritos = { navController.navigate(Rutas.Favoritos.ruta) },
-                onIrAcercaDe = { navController.navigate(Rutas.AcercaDe.ruta) }
+                onIrAcercaDe = { navController.navigate(Rutas.AcercaDe.ruta) },
+                onIrCamara = { navController.navigate(Rutas.Camara.ruta) }
             )
+        }
+        composable(Rutas.Camara.ruta) {
+            CamaraFotos()
         }
         composable(Rutas.ListaLeyes.ruta) {
             ListaLeyesPantalla(

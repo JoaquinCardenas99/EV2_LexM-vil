@@ -10,4 +10,5 @@ sealed class Rutas(val ruta: String) {
     object Busqueda : Rutas("busqueda")
     object Favoritos : Rutas("favoritos")
     object AcercaDe : Rutas("acerca_de")
+    object Camara : Rutas("camara")
 }

@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.filled.Book
+import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Search
@@ -42,7 +43,8 @@ fun LexMovilPantalla(
     onIrListaLeyes: () -> Unit,
     onIrBusqueda: () -> Unit,
     onIrFavoritos: () -> Unit,
-    onIrAcercaDe: () -> Unit
+    onIrAcercaDe: () -> Unit,
+    onIrCamara: () -> Unit
 ) {
     val usuario by authViewModel.usuarioLogueado.collectAsState()
 
@@ -132,6 +134,17 @@ fun LexMovilPantalla(
                     Icon(Icons.Filled.Info, contentDescription = null)
                     Spacer(modifier = Modifier.padding(4.dp))
                     Text("Acerca de LexMovil")
+                }
+            }
+            Spacer(modifier = Modifier.height(12.dp))
+            OutlinedButton(
+                onClick = onIrCamara,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(Icons.Filled.CameraAlt, contentDescription = null)
+                    Spacer(modifier = Modifier.padding(4.dp))
+                    Text("Tomar foto / Escanear documento")
                 }
             }
         }

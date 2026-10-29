@@ -1,9 +1,20 @@
 -- Merging decision tree log ---
+provider#androidx.core.content.FileProvider
+INJECTED from /home/coquins/StudioProjects/EV2_LexM-vil/Ev2_DesarrolloAPL/app/src/main/AndroidManifest.xml:19:9-27:20
+	android:grantUriPermissions
+		ADDED from /home/coquins/StudioProjects/EV2_LexM-vil/Ev2_DesarrolloAPL/app/src/main/AndroidManifest.xml:23:13-47
+	android:authorities
+		INJECTED from /home/coquins/StudioProjects/EV2_LexM-vil/Ev2_DesarrolloAPL/app/src/main/AndroidManifest.xml
+		ADDED from /home/coquins/StudioProjects/EV2_LexM-vil/Ev2_DesarrolloAPL/app/src/main/AndroidManifest.xml:21:13-60
+	android:exported
+		ADDED from /home/coquins/StudioProjects/EV2_LexM-vil/Ev2_DesarrolloAPL/app/src/main/AndroidManifest.xml:22:13-37
+	android:name
+		ADDED from /home/coquins/StudioProjects/EV2_LexM-vil/Ev2_DesarrolloAPL/app/src/main/AndroidManifest.xml:20:13-62
 manifest
-ADDED from /home/coquins/StudioProjects/EV2_LexM-vil/Ev2_DesarrolloAPL/app/src/main/AndroidManifest.xml:2:1-28:12
-INJECTED from /home/coquins/StudioProjects/EV2_LexM-vil/Ev2_DesarrolloAPL/app/src/main/AndroidManifest.xml:2:1-28:12
-INJECTED from /home/coquins/StudioProjects/EV2_LexM-vil/Ev2_DesarrolloAPL/app/src/main/AndroidManifest.xml:2:1-28:12
-INJECTED from /home/coquins/StudioProjects/EV2_LexM-vil/Ev2_DesarrolloAPL/app/src/main/AndroidManifest.xml:2:1-28:12
+ADDED from /home/coquins/StudioProjects/EV2_LexM-vil/Ev2_DesarrolloAPL/app/src/main/AndroidManifest.xml:2:1-42:12
+INJECTED from /home/coquins/StudioProjects/EV2_LexM-vil/Ev2_DesarrolloAPL/app/src/main/AndroidManifest.xml:2:1-42:12
+INJECTED from /home/coquins/StudioProjects/EV2_LexM-vil/Ev2_DesarrolloAPL/app/src/main/AndroidManifest.xml:2:1-42:12
+INJECTED from /home/coquins/StudioProjects/EV2_LexM-vil/Ev2_DesarrolloAPL/app/src/main/AndroidManifest.xml:2:1-42:12
 MERGED from [androidx.navigation:navigation-common:2.8.3] /home/coquins/.gradle/caches/9.6.0/transforms/9e2da5e799f4061f4cd84ed22b50b1a3/transformed/navigation-common-2.8.3/AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.navigation:navigation-runtime:2.8.3] /home/coquins/.gradle/caches/9.6.0/transforms/90ed07af4f9302d7a225b43e5e08cf2d/transformed/navigation-runtime-2.8.3/AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.navigation:navigation-common-ktx:2.8.3] /home/coquins/.gradle/caches/9.6.0/transforms/cf77f76ca52fd483effe293c04359a80/transformed/navigation-common-ktx-2.8.3/AndroidManifest.xml:2:1-7:12
@@ -84,9 +95,31 @@ MERGED from [androidx.print:print:1.0.0] /home/coquins/.gradle/caches/9.6.0/tran
 		INJECTED from /home/coquins/StudioProjects/EV2_LexM-vil/Ev2_DesarrolloAPL/app/src/main/AndroidManifest.xml
 	xmlns:android
 		ADDED from /home/coquins/StudioProjects/EV2_LexM-vil/Ev2_DesarrolloAPL/app/src/main/AndroidManifest.xml:2:11-69
+uses-permission#android.permission.CAMERA
+ADDED from /home/coquins/StudioProjects/EV2_LexM-vil/Ev2_DesarrolloAPL/app/src/main/AndroidManifest.xml:5:5-65
+	android:name
+		ADDED from /home/coquins/StudioProjects/EV2_LexM-vil/Ev2_DesarrolloAPL/app/src/main/AndroidManifest.xml:5:22-62
+uses-permission#android.permission.WRITE_EXTERNAL_STORAGE
+ADDED from /home/coquins/StudioProjects/EV2_LexM-vil/Ev2_DesarrolloAPL/app/src/main/AndroidManifest.xml:6:5-108
+	android:maxSdkVersion
+		ADDED from /home/coquins/StudioProjects/EV2_LexM-vil/Ev2_DesarrolloAPL/app/src/main/AndroidManifest.xml:6:79-105
+	android:name
+		ADDED from /home/coquins/StudioProjects/EV2_LexM-vil/Ev2_DesarrolloAPL/app/src/main/AndroidManifest.xml:6:22-78
+uses-permission#android.permission.READ_EXTERNAL_STORAGE
+ADDED from /home/coquins/StudioProjects/EV2_LexM-vil/Ev2_DesarrolloAPL/app/src/main/AndroidManifest.xml:7:5-107
+	android:maxSdkVersion
+		ADDED from /home/coquins/StudioProjects/EV2_LexM-vil/Ev2_DesarrolloAPL/app/src/main/AndroidManifest.xml:7:78-104
+	android:name
+		ADDED from /home/coquins/StudioProjects/EV2_LexM-vil/Ev2_DesarrolloAPL/app/src/main/AndroidManifest.xml:7:22-77
+uses-feature#android.hardware.camera
+ADDED from /home/coquins/StudioProjects/EV2_LexM-vil/Ev2_DesarrolloAPL/app/src/main/AndroidManifest.xml:8:5-85
+	android:required
+		ADDED from /home/coquins/StudioProjects/EV2_LexM-vil/Ev2_DesarrolloAPL/app/src/main/AndroidManifest.xml:8:58-82
+	android:name
+		ADDED from /home/coquins/StudioProjects/EV2_LexM-vil/Ev2_DesarrolloAPL/app/src/main/AndroidManifest.xml:8:19-57
 application
-ADDED from /home/coquins/StudioProjects/EV2_LexM-vil/Ev2_DesarrolloAPL/app/src/main/AndroidManifest.xml:5:5-26:19
-INJECTED from /home/coquins/StudioProjects/EV2_LexM-vil/Ev2_DesarrolloAPL/app/src/main/AndroidManifest.xml:5:5-26:19
+ADDED from /home/coquins/StudioProjects/EV2_LexM-vil/Ev2_DesarrolloAPL/app/src/main/AndroidManifest.xml:10:5-40:19
+INJECTED from /home/coquins/StudioProjects/EV2_LexM-vil/Ev2_DesarrolloAPL/app/src/main/AndroidManifest.xml:10:5-40:19
 MERGED from [androidx.compose.ui:ui-test-manifest:1.11.0] /home/coquins/.gradle/caches/9.6.0/transforms/ffbb115cdddeaeebb311717b81cd499f/transformed/ui-test-manifest-1.11.0/AndroidManifest.xml:22:5-27:19
 MERGED from [androidx.compose.ui:ui-test-manifest:1.11.0] /home/coquins/.gradle/caches/9.6.0/transforms/ffbb115cdddeaeebb311717b81cd499f/transformed/ui-test-manifest-1.11.0/AndroidManifest.xml:22:5-27:19
 MERGED from [androidx.compose.ui:ui-tooling-android:1.11.0] /home/coquins/.gradle/caches/9.6.0/transforms/1b004e5fe19eeadc5520851c9935930f/transformed/ui-tooling/AndroidManifest.xml:22:5-26:19
@@ -110,43 +143,49 @@ MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] /home/coqui
 	android:appComponentFactory
 		ADDED from [androidx.core:core:1.19.1] /home/coquins/.gradle/caches/9.6.0/transforms/9157efedeaee73dd79970c65ab8a932c/transformed/core-1.19.1/AndroidManifest.xml:28:18-86
 	android:supportsRtl
-		ADDED from /home/coquins/StudioProjects/EV2_LexM-vil/Ev2_DesarrolloAPL/app/src/main/AndroidManifest.xml:12:9-35
+		ADDED from /home/coquins/StudioProjects/EV2_LexM-vil/Ev2_DesarrolloAPL/app/src/main/AndroidManifest.xml:17:9-35
 	android:label
-		ADDED from /home/coquins/StudioProjects/EV2_LexM-vil/Ev2_DesarrolloAPL/app/src/main/AndroidManifest.xml:10:9-33
+		ADDED from /home/coquins/StudioProjects/EV2_LexM-vil/Ev2_DesarrolloAPL/app/src/main/AndroidManifest.xml:15:9-33
 	android:fullBackupContent
-		ADDED from /home/coquins/StudioProjects/EV2_LexM-vil/Ev2_DesarrolloAPL/app/src/main/AndroidManifest.xml:8:9-54
+		ADDED from /home/coquins/StudioProjects/EV2_LexM-vil/Ev2_DesarrolloAPL/app/src/main/AndroidManifest.xml:13:9-54
 	android:roundIcon
-		ADDED from /home/coquins/StudioProjects/EV2_LexM-vil/Ev2_DesarrolloAPL/app/src/main/AndroidManifest.xml:11:9-54
+		ADDED from /home/coquins/StudioProjects/EV2_LexM-vil/Ev2_DesarrolloAPL/app/src/main/AndroidManifest.xml:16:9-54
 	android:icon
-		ADDED from /home/coquins/StudioProjects/EV2_LexM-vil/Ev2_DesarrolloAPL/app/src/main/AndroidManifest.xml:9:9-43
+		ADDED from /home/coquins/StudioProjects/EV2_LexM-vil/Ev2_DesarrolloAPL/app/src/main/AndroidManifest.xml:14:9-43
 	android:allowBackup
-		ADDED from /home/coquins/StudioProjects/EV2_LexM-vil/Ev2_DesarrolloAPL/app/src/main/AndroidManifest.xml:6:9-35
+		ADDED from /home/coquins/StudioProjects/EV2_LexM-vil/Ev2_DesarrolloAPL/app/src/main/AndroidManifest.xml:11:9-35
 	android:theme
-		ADDED from /home/coquins/StudioProjects/EV2_LexM-vil/Ev2_DesarrolloAPL/app/src/main/AndroidManifest.xml:13:9-55
+		ADDED from /home/coquins/StudioProjects/EV2_LexM-vil/Ev2_DesarrolloAPL/app/src/main/AndroidManifest.xml:18:9-55
 	android:dataExtractionRules
-		ADDED from /home/coquins/StudioProjects/EV2_LexM-vil/Ev2_DesarrolloAPL/app/src/main/AndroidManifest.xml:7:9-65
+		ADDED from /home/coquins/StudioProjects/EV2_LexM-vil/Ev2_DesarrolloAPL/app/src/main/AndroidManifest.xml:12:9-65
 activity#duoc.example.EV2_Desarrollo.MainActivity
-ADDED from /home/coquins/StudioProjects/EV2_LexM-vil/Ev2_DesarrolloAPL/app/src/main/AndroidManifest.xml:14:9-25:20
+ADDED from /home/coquins/StudioProjects/EV2_LexM-vil/Ev2_DesarrolloAPL/app/src/main/AndroidManifest.xml:28:9-39:20
 	android:label
-		ADDED from /home/coquins/StudioProjects/EV2_LexM-vil/Ev2_DesarrolloAPL/app/src/main/AndroidManifest.xml:17:13-37
+		ADDED from /home/coquins/StudioProjects/EV2_LexM-vil/Ev2_DesarrolloAPL/app/src/main/AndroidManifest.xml:31:13-37
 	android:windowSoftInputMode
-		ADDED from /home/coquins/StudioProjects/EV2_LexM-vil/Ev2_DesarrolloAPL/app/src/main/AndroidManifest.xml:19:13-55
+		ADDED from /home/coquins/StudioProjects/EV2_LexM-vil/Ev2_DesarrolloAPL/app/src/main/AndroidManifest.xml:33:13-55
 	android:exported
-		ADDED from /home/coquins/StudioProjects/EV2_LexM-vil/Ev2_DesarrolloAPL/app/src/main/AndroidManifest.xml:16:13-36
+		ADDED from /home/coquins/StudioProjects/EV2_LexM-vil/Ev2_DesarrolloAPL/app/src/main/AndroidManifest.xml:30:13-36
 	android:theme
-		ADDED from /home/coquins/StudioProjects/EV2_LexM-vil/Ev2_DesarrolloAPL/app/src/main/AndroidManifest.xml:18:13-59
+		ADDED from /home/coquins/StudioProjects/EV2_LexM-vil/Ev2_DesarrolloAPL/app/src/main/AndroidManifest.xml:32:13-59
 	android:name
-		ADDED from /home/coquins/StudioProjects/EV2_LexM-vil/Ev2_DesarrolloAPL/app/src/main/AndroidManifest.xml:15:13-41
+		ADDED from /home/coquins/StudioProjects/EV2_LexM-vil/Ev2_DesarrolloAPL/app/src/main/AndroidManifest.xml:29:13-41
 intent-filter#action:name:android.intent.action.MAIN+category:name:android.intent.category.LAUNCHER
-ADDED from /home/coquins/StudioProjects/EV2_LexM-vil/Ev2_DesarrolloAPL/app/src/main/AndroidManifest.xml:20:13-24:29
+ADDED from /home/coquins/StudioProjects/EV2_LexM-vil/Ev2_DesarrolloAPL/app/src/main/AndroidManifest.xml:34:13-38:29
 action#android.intent.action.MAIN
-ADDED from /home/coquins/StudioProjects/EV2_LexM-vil/Ev2_DesarrolloAPL/app/src/main/AndroidManifest.xml:21:17-69
+ADDED from /home/coquins/StudioProjects/EV2_LexM-vil/Ev2_DesarrolloAPL/app/src/main/AndroidManifest.xml:35:17-69
 	android:name
-		ADDED from /home/coquins/StudioProjects/EV2_LexM-vil/Ev2_DesarrolloAPL/app/src/main/AndroidManifest.xml:21:25-66
+		ADDED from /home/coquins/StudioProjects/EV2_LexM-vil/Ev2_DesarrolloAPL/app/src/main/AndroidManifest.xml:35:25-66
 category#android.intent.category.LAUNCHER
-ADDED from /home/coquins/StudioProjects/EV2_LexM-vil/Ev2_DesarrolloAPL/app/src/main/AndroidManifest.xml:23:17-77
+ADDED from /home/coquins/StudioProjects/EV2_LexM-vil/Ev2_DesarrolloAPL/app/src/main/AndroidManifest.xml:37:17-77
 	android:name
-		ADDED from /home/coquins/StudioProjects/EV2_LexM-vil/Ev2_DesarrolloAPL/app/src/main/AndroidManifest.xml:23:27-74
+		ADDED from /home/coquins/StudioProjects/EV2_LexM-vil/Ev2_DesarrolloAPL/app/src/main/AndroidManifest.xml:37:27-74
+meta-data#android.support.FILE_PROVIDER_PATHS
+ADDED from /home/coquins/StudioProjects/EV2_LexM-vil/Ev2_DesarrolloAPL/app/src/main/AndroidManifest.xml:24:13-26:54
+	android:resource
+		ADDED from /home/coquins/StudioProjects/EV2_LexM-vil/Ev2_DesarrolloAPL/app/src/main/AndroidManifest.xml:26:17-51
+	android:name
+		ADDED from /home/coquins/StudioProjects/EV2_LexM-vil/Ev2_DesarrolloAPL/app/src/main/AndroidManifest.xml:25:17-67
 uses-sdk
 INJECTED from /home/coquins/StudioProjects/EV2_LexM-vil/Ev2_DesarrolloAPL/app/src/main/AndroidManifest.xml reason: use-sdk injection requested
 INJECTED from /home/coquins/StudioProjects/EV2_LexM-vil/Ev2_DesarrolloAPL/app/src/main/AndroidManifest.xml

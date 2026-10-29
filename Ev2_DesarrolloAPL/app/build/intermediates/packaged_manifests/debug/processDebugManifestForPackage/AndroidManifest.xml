@@ -8,6 +8,18 @@
         android:minSdkVersion="24"
         android:targetSdkVersion="37" />
 
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="28" />
+    <uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="28" />
+
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
+
     <permission
         android:name="duoc.example.EV2_Desarrollo.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
         android:protectionLevel="signature" />
@@ -27,6 +39,16 @@
         android:supportsRtl="true"
         android:testOnly="true"
         android:theme="@style/Theme.Ev2_DesarrolloAPL" >
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="duoc.example.EV2_Desarrollo.provider"
+            android:exported="false"
+            android:grantUriPermissions="true" >
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
         <activity
             android:name="duoc.example.EV2_Desarrollo.MainActivity"
             android:exported="true"

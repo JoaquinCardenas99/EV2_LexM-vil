@@ -1,6 +1,8 @@
 package duoc.example.EV2_Desarrollo.viewmodel
 
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import android.content.Context
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import duoc.example.EV2_Desarrollo.model.UsuarioMem
 import duoc.example.EV2_Desarrollo.model.UsuarioRepositoryMem
@@ -9,12 +11,39 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class AuthViewModel : ViewModel() {
+class AuthViewModel(application: Application) : AndroidViewModel(application) {
     private val _usuarioLogueado = MutableStateFlow<UsuarioMem?>(null)
     val usuarioLogueado: StateFlow<UsuarioMem?> = _usuarioLogueado.asStateFlow()
 
     private val _mensaje = MutableStateFlow<String?>(null)
     val mensaje: StateFlow<String?> = _mensaje.asStateFlow()
+    
+    init {
+        UsuarioRepositoryMem.init(application.applicationContext)
+        cargarSesion(application.applicationContext)
+    }
+    
+    private fun cargarSesion(context: Context) {
+        val prefs = context.getSharedPreferences("lexmovil_session", Context.MODE_PRIVATE)
+        val correo = prefs.getString("correo", null)
+        val password = prefs.getString("password", null)
+        if (correo != null && password != null) {
+            val user = UsuarioRepositoryMem.login(correo, password)
+            if (user != null) {
+                _usuarioLogueado.value = user
+            }
+        }
+    }
+    
+    private fun guardarSesion(context: Context, correo: String, password: String) {
+        val prefs = context.getSharedPreferences("lexmovil_session", Context.MODE_PRIVATE)
+        prefs.edit().putString("correo", correo).putString("password", password).apply()
+    }
+    
+    private fun borrarSesion(context: Context) {
+        val prefs = context.getSharedPreferences("lexmovil_session", Context.MODE_PRIVATE)
+        prefs.edit().clear().apply()
+    }
 
     fun limpiarMensaje() {
         _mensaje.value = null
@@ -25,6 +54,7 @@ class AuthViewModel : ViewModel() {
             val user = UsuarioRepositoryMem.login(correo.trim(), password)
             if (user != null) {
                 _usuarioLogueado.value = user
+                guardarSesion(getApplication(), correo.trim(), password)
                 _mensaje.value = "Bienvenido/a ${user.nombreCompleto}"
             } else {
                 _mensaje.value = "Correo o contraseña incorrectos"
@@ -83,7 +113,7 @@ class AuthViewModel : ViewModel() {
                 tipo = tipo,
                 password = pass
             )
-            val res = UsuarioRepositoryMem.registrar(usuario)
+            val res = UsuarioRepositoryMem.registrar(getApplication(), usuario)
             if (res > 0) {
                 _mensaje.value = "Registro exitoso. Ahora puedes iniciar sesión"
             } else {
@@ -93,6 +123,7 @@ class AuthViewModel : ViewModel() {
     }
 
     fun cerrarSesion() {
+        borrarSesion(getApplication())
         _usuarioLogueado.value = null
     }
 }
