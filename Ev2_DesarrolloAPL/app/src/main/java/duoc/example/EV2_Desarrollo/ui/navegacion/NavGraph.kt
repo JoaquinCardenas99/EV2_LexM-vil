@@ -17,6 +17,7 @@ import duoc.example.EV2_Desarrollo.ui.pantallas.DetalleLeyPantalla
 import duoc.example.EV2_Desarrollo.ui.pantallas.FavoritosPantalla
 import duoc.example.EV2_Desarrollo.ui.pantallas.LexMovilPantalla
 import duoc.example.EV2_Desarrollo.ui.pantallas.ListaLeyesPantalla
+import duoc.example.EV2_Desarrollo.ui.pantallas.SplashPantalla
 import duoc.example.EV2_Desarrollo.viewmodel.AuthViewModel
 import duoc.example.EV2_Desarrollo.viewmodel.LeyViewModel
 
@@ -26,7 +27,16 @@ fun NavGraph() {
     val authViewModel: AuthViewModel = viewModel()
     val leyViewModel: LeyViewModel = viewModel()
 
-    NavHost(navController = navController, startDestination = Rutas.Bienvenida.ruta) {
+    NavHost(navController = navController, startDestination = Rutas.Splash.ruta) {
+        composable(Rutas.Splash.ruta) {
+            SplashPantalla(
+                onTerminar = {
+                    navController.navigate(Rutas.Bienvenida.ruta) {
+                        popUpTo(Rutas.Splash.ruta) { inclusive = true }
+                    }
+                }
+            )
+        }
         composable(Rutas.Bienvenida.ruta) {
             BienvenidaPantalla(
                 onIrLogin = { navController.navigate(Rutas.Login.ruta) },
