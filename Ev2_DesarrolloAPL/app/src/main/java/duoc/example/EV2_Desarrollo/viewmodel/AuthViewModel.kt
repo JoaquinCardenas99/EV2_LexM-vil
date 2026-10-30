@@ -2,8 +2,10 @@ package duoc.example.EV2_Desarrollo.viewmodel
 
 import android.app.Application
 import android.content.Context
+import android.util.Patterns
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import duoc.example.EV2_Desarrollo.model.ErroresFormulario
 import duoc.example.EV2_Desarrollo.model.UsuarioMem
 import duoc.example.EV2_Desarrollo.model.UsuarioRepositoryMem
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,6 +19,9 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
 
     private val _mensaje = MutableStateFlow<String?>(null)
     val mensaje: StateFlow<String?> = _mensaje.asStateFlow()
+
+    private val _errores = MutableStateFlow(ErroresFormulario())
+    val errores: StateFlow<ErroresFormulario> = _errores.asStateFlow()
     
     init {
         UsuarioRepositoryMem.init(application.applicationContext)
@@ -49,7 +54,18 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
         _mensaje.value = null
     }
 
+    fun limpiarErrores() {
+        _errores.value = ErroresFormulario()
+    }
+
     fun login(correo: String, password: String) {
+        val erroresLogin = ErroresFormulario(
+            correo = if (!correoValido(correo.trim())) "Correo electrónico inválido" else null,
+            password = if (password.isBlank()) "Ingresa tu contraseña" else null
+        )
+        _errores.value = erroresLogin
+        if (erroresLogin.hayErrores()) return
+
         viewModelScope.launch {
             val user = UsuarioRepositoryMem.login(correo.trim(), password)
             if (user != null) {
@@ -74,31 +90,9 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
         val pass = password.trim()
         val passConf = passwordConfirm.trim()
 
-        // Validaciones
-        if (nombreCompleto.isBlank() || rut.isBlank() || correoTrim.isBlank()) {
-            _mensaje.value = "Completa todos los campos obligatorios"
-            return
-        }
-        if (!correoTrim.contains("@") || !correoTrim.contains(".")) {
-            _mensaje.value = "Correo electrónico inválido"
-            return
-        }
-        if (pass != passConf) {
-            _mensaje.value = "Las contraseñas no coinciden"
-            return
-        }
-        // Debe contener mayúscula, número y carácter especial
-        val tieneMayus = pass.any { it.isUpperCase() }
-        val tieneNumero = pass.any { it.isDigit() }
-        val tieneEspecial = pass.any { !it.isLetterOrDigit() }
-        if (pass.length < 8) {
-            _mensaje.value = "La contraseña debe tener al menos 8 caracteres"
-            return
-        }
-        if (!tieneMayus || !tieneNumero || !tieneEspecial) {
-            _mensaje.value = "La contraseña debe contener al menos una mayúscula, un número y un carácter especial"
-            return
-        }
+        val erroresRegistro = validarRegistro(nombreCompleto, rut, correoTrim, pass, passConf)
+        _errores.value = erroresRegistro
+        if (erroresRegistro.hayErrores()) return
 
         viewModelScope.launch {
             val existente = UsuarioRepositoryMem.obtenerPorCorreo(correoTrim)
@@ -125,5 +119,56 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
     fun cerrarSesion() {
         borrarSesion(getApplication())
         _usuarioLogueado.value = null
+    }
+
+    private fun validarRegistro(
+        nombreCompleto: String,
+        rut: String,
+        correo: String,
+        password: String,
+        passwordConfirm: String
+    ): ErroresFormulario {
+        val palabrasNombre = nombreCompleto.trim().split(" ").filter { it.isNotBlank() }
+        return ErroresFormulario(
+            nombre = if (palabrasNombre.size < 2) "Ingresa tu nombre y apellido" else null,
+            rut = if (!rutValido(rut)) "RUT invalido (ej: 12.345.678-5)" else null,
+            correo = if (!correoValido(correo)) "Correo electrónico invalido" else null,
+            password = validarPassword(password),
+            confirmacion = if (password != passwordConfirm) "Las contraseñas no coinciden" else null
+        )
+    }
+
+    private fun correoValido(correo: String): Boolean =
+        Patterns.EMAIL_ADDRESS.matcher(correo).matches()
+
+    private fun validarPassword(password: String): String? = when {
+        password.length < 8 -> "Debe tener al menos 8 caracteres"
+        password.none { it.isUpperCase() } -> "Debe incluir al menos una mayúscula"
+        password.none { it.isDigit() } -> "Debe incluir al menos un número"
+        password.all { it.isLetterOrDigit() } -> "Debe incluir al menos un carácter especial"
+        else -> null
+    }
+
+    // Valida el RUT chileno con el algoritmo de módulo 11
+    private fun rutValido(rut: String): Boolean {
+        val limpio = rut.replace(".", "").replace("-", "").trim().uppercase()
+        if (limpio.length < 8 || limpio.length > 9) return false
+        val cuerpo = limpio.dropLast(1)
+        val digitoVerificador = limpio.last()
+        if (!cuerpo.all { it.isDigit() }) return false
+
+        var suma = 0
+        var multiplicador = 2
+        for (digito in cuerpo.reversed()) {
+            suma += digito.digitToInt() * multiplicador
+            multiplicador = if (multiplicador == 7) 2 else multiplicador + 1
+        }
+        val resto = 11 - (suma % 11)
+        val esperado = when (resto) {
+            11 -> '0'
+            10 -> 'K'
+            else -> resto.digitToChar()
+        }
+        return digitoVerificador == esperado
     }
 }

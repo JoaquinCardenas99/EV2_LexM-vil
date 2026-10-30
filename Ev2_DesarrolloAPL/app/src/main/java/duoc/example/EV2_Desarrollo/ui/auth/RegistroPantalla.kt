@@ -13,11 +13,14 @@ import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Badge
+import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -35,8 +38,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import duoc.example.EV2_Desarrollo.ui.componentes.CampoTexto
 import duoc.example.EV2_Desarrollo.viewmodel.AuthViewModel
 import kotlinx.coroutines.launch
 
@@ -58,6 +61,11 @@ fun RegistroPantalla(
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     val opciones = listOf("Estudiante", "Abogado")
+    val errores by viewModel.errores.collectAsState()
+
+    LaunchedEffect(Unit) {
+        viewModel.limpiarErrores()
+    }
 
     LaunchedEffect(mensaje) {
         mensaje?.let {
@@ -91,30 +99,30 @@ fun RegistroPantalla(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top
         ) {
-            OutlinedTextField(
-                value = nombreCompleto,
-                onValueChange = { nombreCompleto = it },
-                label = { Text("Nombre completo") },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true
+            CampoTexto(
+                valor = nombreCompleto,
+                alCambiar = { nombreCompleto = it },
+                etiqueta = "Nombre completo",
+                icono = Icons.Filled.Person,
+                error = errores.nombre
             )
-            Spacer(modifier = Modifier.height(12.dp))
-            OutlinedTextField(
-                value = rut,
-                onValueChange = { rut = it },
-                label = { Text("RUT") },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true
+            Spacer(modifier = Modifier.height(8.dp))
+            CampoTexto(
+                valor = rut,
+                alCambiar = { rut = it },
+                etiqueta = "RUT",
+                icono = Icons.Filled.Badge,
+                error = errores.rut
             )
-            Spacer(modifier = Modifier.height(12.dp))
-            OutlinedTextField(
-                value = correo,
-                onValueChange = { correo = it },
-                label = { Text("Correo electrónico") },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true
+            Spacer(modifier = Modifier.height(8.dp))
+            CampoTexto(
+                valor = correo,
+                alCambiar = { correo = it },
+                etiqueta = "Correo electrónico",
+                icono = Icons.Filled.Email,
+                error = errores.correo
             )
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(8.dp))
             Text(text = "Tipo de usuario", modifier = Modifier.align(Alignment.Start))
             opciones.forEach { opcion ->
                 Row(
@@ -138,28 +146,23 @@ fun RegistroPantalla(
                     )
                 }
             }
-            Spacer(modifier = Modifier.height(16.dp))
-            OutlinedTextField(
-                value = password,
-                onValueChange = { password = it },
-                label = { Text("Contraseña") },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true,
-                visualTransformation = PasswordVisualTransformation()
+            Spacer(modifier = Modifier.height(8.dp))
+            CampoTexto(
+                valor = password,
+                alCambiar = { password = it },
+                etiqueta = "Contraseña",
+                icono = Icons.Filled.Lock,
+                error = errores.password,
+                esPassword = true
             )
             Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = "Debe tener al menos 8 caracteres, 1 mayúscula, 1 número y 1 carácter especial",
-                modifier = Modifier.align(Alignment.Start)
-            )
-            Spacer(modifier = Modifier.height(12.dp))
-            OutlinedTextField(
-                value = passwordConfirm,
-                onValueChange = { passwordConfirm = it },
-                label = { Text("Confirmar contraseña") },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true,
-                visualTransformation = PasswordVisualTransformation()
+            CampoTexto(
+                valor = passwordConfirm,
+                alCambiar = { passwordConfirm = it },
+                etiqueta = "Confirmar contraseña",
+                icono = Icons.Filled.Lock,
+                error = errores.confirmacion,
+                esPassword = true
             )
             Spacer(modifier = Modifier.height(24.dp))
             Button(
