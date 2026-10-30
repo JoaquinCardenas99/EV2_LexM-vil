@@ -7,6 +7,6 @@
     <color name="teal_200">#FF03DAC5</color>
     <color name="teal_700">#FF018786</color>
     <color name="white">#FFFFFFFF</color>
-    <string name="app_name">Ev2_DesarrolloAPL</string>
+    <string name="app_name">LexMovil</string>
     <style name="Theme.Ev2_DesarrolloAPL" parent="android:Theme.Material.Light.NoActionBar"/>
 </resources>
