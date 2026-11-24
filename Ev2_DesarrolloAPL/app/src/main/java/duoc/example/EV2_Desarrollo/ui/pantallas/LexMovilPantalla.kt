@@ -1,5 +1,7 @@
 package duoc.example.EV2_Desarrollo.ui.pantallas
 
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -39,7 +41,6 @@ import duoc.example.EV2_Desarrollo.viewmodel.AuthViewModel
 @Composable
 fun LexMovilPantalla(
     authViewModel: AuthViewModel,
-    onCerrarSesion: () -> Unit,
     onIrListaLeyes: () -> Unit,
     onIrBusqueda: () -> Unit,
     onIrFavoritos: () -> Unit,
@@ -47,6 +48,8 @@ fun LexMovilPantalla(
     onIrCamara: () -> Unit
 ) {
     val usuario by authViewModel.usuarioLogueado.collectAsState()
+    val indicador: duoc.example.EV2_Desarrollo.viewmodel.IndicadorViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
+    val uf by indicador.estado.collectAsState()
 
     Scaffold(
         topBar = {
@@ -55,7 +58,6 @@ fun LexMovilPantalla(
                 actions = {
                     IconButton(onClick = {
                         authViewModel.cerrarSesion()
-                        onCerrarSesion()
                     }) {
                         Icon(Icons.AutoMirrored.Filled.ExitToApp, contentDescription = "Cerrar sesión")
                     }
@@ -67,6 +69,7 @@ fun LexMovilPantalla(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
+                .verticalScroll(rememberScrollState())
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -80,7 +83,7 @@ fun LexMovilPantalla(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = "Estudio y consulta móvil de legislación actualizada",
+                        text = "Estudio y consulta de material jurídico de ejemplo",
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
                         textAlign = androidx.compose.ui.text.style.TextAlign.Center
@@ -93,6 +96,22 @@ fun LexMovilPantalla(
                 }
             }
 
+            Card(Modifier.fillMaxWidth().padding(bottom = 16.dp)) {
+                Column(Modifier.padding(16.dp)) {
+                    Text("UF de referencia", fontWeight = FontWeight.Bold)
+                    Text("Consulta para estudiar montos expresados en UF.")
+                    if (uf.cargando) Text("Consultando…")
+                    uf.valor?.let { valor ->
+                        val formato = java.text.NumberFormat.getNumberInstance(java.util.Locale.forLanguageTag("es-CL"))
+                        formato.minimumFractionDigits = 2
+                        formato.maximumFractionDigits = 2
+                        Text("$${formato.format(valor.valor)} CLP · ${valor.fecha.take(10)}")
+                        Text("Fuente: mindicador.cl", style = MaterialTheme.typography.bodySmall)
+                    }
+                    uf.error?.let { Text(it) }
+                    androidx.compose.material3.TextButton(enabled = !uf.cargando, onClick = { indicador.actualizar() }) { Text("Actualizar UF") }
+                }
+            }
             Button(
                 onClick = onIrListaLeyes,
                 modifier = Modifier.fillMaxWidth()
@@ -144,7 +163,7 @@ fun LexMovilPantalla(
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(Icons.Filled.CameraAlt, contentDescription = null)
                     Spacer(modifier = Modifier.padding(4.dp))
-                    Text("Tomar foto / Escanear documento")
+                    Text("Fotografiar documento")
                 }
             }
         }

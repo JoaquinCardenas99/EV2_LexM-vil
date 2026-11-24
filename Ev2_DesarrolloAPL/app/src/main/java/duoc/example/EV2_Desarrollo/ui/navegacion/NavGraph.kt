@@ -1,6 +1,11 @@
 package duoc.example.EV2_Desarrollo.ui.navegacion
 
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -29,14 +34,27 @@ fun NavGraph() {
 
     NavHost(navController = navController, startDestination = Rutas.Splash.ruta) {
         composable(Rutas.Splash.ruta) {
-            SplashPantalla(
-                onTerminar = {
-                    navController.navigate(Rutas.Bienvenida.ruta) {
+            var animacionTerminada by remember { mutableStateOf(false) }
+            val restaurando by authViewModel.restaurando.collectAsState()
+            val errorSesion by authViewModel.errorSesion.collectAsState()
+            val usuario by authViewModel.usuarioLogueado.collectAsState()
+            LaunchedEffect(animacionTerminada, restaurando, errorSesion, usuario) {
+                if (animacionTerminada && !restaurando && errorSesion == null) {
+                    navController.navigate(if (usuario != null) Rutas.LexMovil.ruta else Rutas.Bienvenida.ruta) {
                         popUpTo(Rutas.Splash.ruta) { inclusive = true }
                     }
                 }
-            )
+            }
+            if (!animacionTerminada) SplashPantalla(onTerminar = { animacionTerminada = true })
+            else Column(Modifier.fillMaxSize().padding(24.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
+                if (restaurando) CircularProgressIndicator()
+                errorSesion?.let {
+                    Text(it)
+                    Button(onClick = { authViewModel.restaurarSesion() }) { Text("Reintentar conexión") }
+                }
+            }
         }
+
         composable(Rutas.Bienvenida.ruta) {
             BienvenidaPantalla(
                 onIrLogin = { navController.navigate(Rutas.Login.ruta) },
@@ -66,13 +84,20 @@ fun NavGraph() {
             )
         }
         composable(Rutas.LexMovil.ruta) {
+            val usuario by authViewModel.usuarioLogueado.collectAsState()
+            val mensaje by authViewModel.mensaje.collectAsState()
+            LaunchedEffect(usuario) {
+                if (usuario == null) {
+                    leyViewModel.limpiarFavoritos()
+                    navController.navigate(Rutas.Bienvenida.ruta) { popUpTo(0) { inclusive = true } }
+                } else leyViewModel.cargarFavoritos()
+            }
+            mensaje?.let { texto ->
+                AlertDialog(onDismissRequest = { authViewModel.limpiarMensaje() }, text = { Text(texto) },
+                    confirmButton = { TextButton(onClick = { authViewModel.limpiarMensaje() }) { Text("Aceptar") } })
+            }
             LexMovilPantalla(
                 authViewModel = authViewModel,
-                onCerrarSesion = {
-                    navController.navigate(Rutas.Bienvenida.ruta) {
-                        popUpTo(0) { inclusive = true }
-                    }
-                },
                 onIrListaLeyes = { navController.navigate(Rutas.ListaLeyes.ruta) },
                 onIrBusqueda = { navController.navigate(Rutas.Busqueda.ruta) },
                 onIrFavoritos = { navController.navigate(Rutas.Favoritos.ruta) },
@@ -81,7 +106,7 @@ fun NavGraph() {
             )
         }
         composable(Rutas.Camara.ruta) {
-            CamaraFotos()
+            CamaraFotos(onVolver = { navController.popBackStack() })
         }
         composable(Rutas.ListaLeyes.ruta) {
             ListaLeyesPantalla(

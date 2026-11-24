@@ -40,6 +40,9 @@ fun BusquedaPantalla(
     onVerDetalle: (Int) -> Unit
 ) {
     val leyes by viewModel.leyes.collectAsState()
+    val mensaje by viewModel.mensaje.collectAsState()
+    val ocupado by viewModel.ocupado.collectAsState()
+    androidx.compose.runtime.LaunchedEffect(Unit) { viewModel.cargarCatalogo() }
     val busqueda by viewModel.busqueda.collectAsState()
 
     Scaffold(
@@ -60,6 +63,13 @@ fun BusquedaPantalla(
                 .padding(padding)
                 .padding(16.dp)
         ) {
+
+                Text("Catálogo académico de ejemplo")
+                if (ocupado) androidx.compose.material3.LinearProgressIndicator(Modifier.fillMaxWidth())
+                mensaje?.let { Text(it) }
+                if (mensaje != null || (!ocupado && leyes.isEmpty())) {
+                    androidx.compose.material3.TextButton(onClick = { viewModel.cargarCatalogo() }) { Text("Reintentar") }
+                }
             OutlinedTextField(
                 value = busqueda,
                 onValueChange = { viewModel.actualizarBusqueda(it) },

@@ -45,6 +45,7 @@ fun LoginPantalla(
     var correo by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     val mensaje by viewModel.mensaje.collectAsState()
+    val ocupado by viewModel.ocupado.collectAsState()
     val usuarioLogueado by viewModel.usuarioLogueado.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
@@ -108,7 +109,7 @@ fun LoginPantalla(
             Button(
                 onClick = { viewModel.login(correo, password) },
                 modifier = Modifier.fillMaxWidth(),
-                enabled = correo.isNotBlank() && password.isNotBlank()
+                enabled = !ocupado && correo.isNotBlank() && password.isNotBlank()
             ) {
                 Text("Ingresar")
             }

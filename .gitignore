@@ -1,0 +1,11 @@
+**/.gradle/
+**/build/
+**/target/
+**/local.properties
+**/.idea/
+backend/data/
+*.jks
+*.keystore
+keystore.properties
+.env
+**/.kotlin/

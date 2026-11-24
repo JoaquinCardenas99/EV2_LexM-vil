@@ -38,6 +38,9 @@ fun ListaLeyesPantalla(
     onVerDetalle: (Int) -> Unit
 ) {
     val leyes by viewModel.leyes.collectAsState()
+    val mensaje by viewModel.mensaje.collectAsState()
+    val ocupado by viewModel.ocupado.collectAsState()
+    androidx.compose.runtime.LaunchedEffect(Unit) { viewModel.cargarCatalogo() }
 
     Scaffold(
         topBar = {
@@ -57,6 +60,15 @@ fun ListaLeyesPantalla(
                 .padding(padding)
                 .padding(16.dp)
         ) {
+            item {
+
+                Text("Catálogo académico de ejemplo")
+                if (ocupado) androidx.compose.material3.LinearProgressIndicator(Modifier.fillMaxWidth())
+                mensaje?.let { Text(it) }
+                if (mensaje != null || (!ocupado && leyes.isEmpty())) {
+                    androidx.compose.material3.TextButton(onClick = { viewModel.cargarCatalogo() }) { Text("Reintentar") }
+                }
+            }
             items(leyes) { ley ->
                 Card(
                     modifier = Modifier

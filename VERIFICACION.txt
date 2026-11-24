@@ -1,0 +1,15 @@
+Verificación de entrega LexMóvil — 23 de noviembre de 2026
+
+Android: testDebugUnitTest, 10 pruebas; 0 errores, 0 fallos.
+Backend: mvn test package, 6 pruebas; 0 errores, 0 fallos.
+Prueba HTTP real: registro, login, perfil, logout, catálogo, detalle y CRUD de favoritos completados.
+API externa: https://mindicador.cl/api/uf respondió con una serie válida.
+APK: variante release, firma propia LexMovil verificada con apksigner (v2).
+
+La compilación de demostración apunta a http://10.0.2.2:8080/api/ y habilita HTTP local expresamente.
+Requiere backend activo en el computador y un emulador Android Studio.
+Para teléfono físico, recompilar con la IP del computador o usar la variante USB descrita en README.
+
+Pendiente: prueba visual de extremo a extremo en emulador o celular (el emulador automatizado permaneció offline por ADB).
+No se acredita 80% de cobertura. Sí se cumple el mínimo de dos pruebas del anuncio suministrado.
+Trello e integrantes requieren los datos reales del equipo.
