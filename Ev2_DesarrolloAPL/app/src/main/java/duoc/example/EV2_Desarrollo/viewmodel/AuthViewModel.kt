@@ -1,21 +1,23 @@
 package duoc.example.EV2_Desarrollo.viewmodel
 
 import android.app.Application
-import android.content.Context
 import android.util.Patterns
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import duoc.example.EV2_Desarrollo.model.ErroresFormulario
-import duoc.example.EV2_Desarrollo.model.UsuarioMem
-import duoc.example.EV2_Desarrollo.model.UsuarioRepositoryMem
+import duoc.example.EV2_Desarrollo.model.Usuario
+import duoc.example.EV2_Desarrollo.repository.AuthRepository
+import duoc.example.EV2_Desarrollo.repository.mensajeDeRed
+import duoc.example.EV2_Desarrollo.repository.remote.RegistroRequest
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class AuthViewModel(application: Application) : AndroidViewModel(application) {
-    private val _usuarioLogueado = MutableStateFlow<UsuarioMem?>(null)
-    val usuarioLogueado: StateFlow<UsuarioMem?> = _usuarioLogueado.asStateFlow()
+    private val _usuarioLogueado = MutableStateFlow<Usuario?>(null)
+    val usuarioLogueado: StateFlow<Usuario?> = _usuarioLogueado.asStateFlow()
 
     private val _mensaje = MutableStateFlow<String?>(null)
     val mensaje: StateFlow<String?> = _mensaje.asStateFlow()
@@ -23,31 +25,25 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
     private val _errores = MutableStateFlow(ErroresFormulario())
     val errores: StateFlow<ErroresFormulario> = _errores.asStateFlow()
     
-    init {
-        UsuarioRepositoryMem.init(application.applicationContext)
-        cargarSesion(application.applicationContext)
-    }
-    
-    private fun cargarSesion(context: Context) {
-        val prefs = context.getSharedPreferences("lexmovil_session", Context.MODE_PRIVATE)
-        val correo = prefs.getString("correo", null)
-        val password = prefs.getString("password", null)
-        if (correo != null && password != null) {
-            val user = UsuarioRepositoryMem.login(correo, password)
-            if (user != null) {
-                _usuarioLogueado.value = user
-            }
+    private val repository = AuthRepository(application)
+    private val _restaurando = MutableStateFlow(true)
+    val restaurando = _restaurando.asStateFlow()
+    private val _errorSesion = MutableStateFlow<String?>(null)
+    val errorSesion = _errorSesion.asStateFlow()
+    private val _ocupado = MutableStateFlow(false)
+    val ocupado = _ocupado.asStateFlow()
+
+    init { restaurarSesion() }
+
+    fun restaurarSesion() {
+        _restaurando.value = true
+        _errorSesion.value = null
+        viewModelScope.launch {
+            try { _usuarioLogueado.value = repository.restaurar() }
+            catch (error: CancellationException) { throw error }
+            catch (error: Exception) { _errorSesion.value = mensajeDeRed(error) }
+            finally { _restaurando.value = false }
         }
-    }
-    
-    private fun guardarSesion(context: Context, correo: String, password: String) {
-        val prefs = context.getSharedPreferences("lexmovil_session", Context.MODE_PRIVATE)
-        prefs.edit().putString("correo", correo).putString("password", password).apply()
-    }
-    
-    private fun borrarSesion(context: Context) {
-        val prefs = context.getSharedPreferences("lexmovil_session", Context.MODE_PRIVATE)
-        prefs.edit().clear().apply()
     }
 
     fun limpiarMensaje() {
@@ -66,15 +62,15 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
         _errores.value = erroresLogin
         if (erroresLogin.hayErrores()) return
 
+        if (_ocupado.value) return
+        _ocupado.value = true
         viewModelScope.launch {
-            val user = UsuarioRepositoryMem.login(correo.trim(), password)
-            if (user != null) {
-                _usuarioLogueado.value = user
-                guardarSesion(getApplication(), correo.trim(), password)
-                _mensaje.value = "Bienvenido/a ${user.nombreCompleto}"
-            } else {
-                _mensaje.value = "Correo o contraseña incorrectos"
-            }
+            try {
+                _usuarioLogueado.value = repository.login(correo.trim(), password)
+                _mensaje.value = null
+            } catch (error: CancellationException) { throw error }
+            catch (error: Exception) { _mensaje.value = mensajeDeRed(error) }
+            finally { _ocupado.value = false }
         }
     }
 
@@ -87,38 +83,34 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
         passwordConfirm: String
     ) {
         val correoTrim = correo.trim()
-        val pass = password.trim()
-        val passConf = passwordConfirm.trim()
+        val pass = password
+        val passConf = passwordConfirm
 
         val erroresRegistro = validarRegistro(nombreCompleto, rut, correoTrim, pass, passConf)
         _errores.value = erroresRegistro
         if (erroresRegistro.hayErrores()) return
 
+        if (_ocupado.value) return
+        _ocupado.value = true
         viewModelScope.launch {
-            val existente = UsuarioRepositoryMem.obtenerPorCorreo(correoTrim)
-            if (existente != null) {
-                _mensaje.value = "Ya existe una cuenta con este correo"
-                return@launch
-            }
-            val usuario = UsuarioMem(
-                nombreCompleto = nombreCompleto.trim(),
-                rut = rut.trim(),
-                correo = correoTrim,
-                tipo = tipo,
-                password = pass
-            )
-            val res = UsuarioRepositoryMem.registrar(getApplication(), usuario)
-            if (res > 0) {
+            try {
+                repository.registrar(RegistroRequest(nombreCompleto.trim(), rut.trim(), correoTrim, tipo, pass))
                 _mensaje.value = "Registro exitoso. Ahora puedes iniciar sesión"
-            } else {
-                _mensaje.value = "Error al registrar"
-            }
+            } catch (error: CancellationException) { throw error }
+            catch (error: Exception) { _mensaje.value = mensajeDeRed(error) }
+            finally { _ocupado.value = false }
         }
     }
 
     fun cerrarSesion() {
-        borrarSesion(getApplication())
-        _usuarioLogueado.value = null
+        if (_ocupado.value) return
+        _ocupado.value = true
+        viewModelScope.launch {
+            try { repository.logout(); _usuarioLogueado.value = null; _mensaje.value = null }
+            catch (error: CancellationException) { throw error }
+            catch (error: Exception) { _mensaje.value = mensajeDeRed(error) }
+            finally { _ocupado.value = false }
+        }
     }
 
     private fun validarRegistro(

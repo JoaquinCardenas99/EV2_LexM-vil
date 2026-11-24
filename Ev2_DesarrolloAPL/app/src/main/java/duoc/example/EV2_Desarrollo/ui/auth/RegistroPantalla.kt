@@ -58,6 +58,7 @@ fun RegistroPantalla(
     var passwordConfirm by remember { mutableStateOf("") }
 
     val mensaje by viewModel.mensaje.collectAsState()
+    val ocupado by viewModel.ocupado.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     val opciones = listOf("Estudiante", "Abogado")
@@ -137,6 +138,7 @@ fun RegistroPantalla(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     RadioButton(
+                enabled = !ocupado,
                         selected = (tipo == opcion),
                         onClick = null
                     )
@@ -166,6 +168,7 @@ fun RegistroPantalla(
             )
             Spacer(modifier = Modifier.height(24.dp))
             Button(
+                enabled = !ocupado,
                 onClick = {
                     viewModel.registrar(
                         nombreCompleto = nombreCompleto,

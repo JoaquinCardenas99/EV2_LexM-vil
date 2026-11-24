@@ -36,7 +36,9 @@ fun FavoritosPantalla(
     onVolver: () -> Unit,
     onVerDetalle: (Int) -> Unit
 ) {
-    val favoritos = viewModel.obtenerFavoritos()
+    val ids by viewModel.favoritos.collectAsState()
+    val favoritos = viewModel.obtenerFavoritos().filter { it.id in ids }
+    val mensaje by viewModel.mensaje.collectAsState()
 
     Scaffold(
         topBar = {
@@ -56,6 +58,8 @@ fun FavoritosPantalla(
                 .padding(padding)
                 .padding(16.dp)
         ) {
+            mensaje?.let { item { Text(it) } }
+            item { androidx.compose.material3.TextButton(onClick = { viewModel.cargarFavoritos() }) { Text("Actualizar favoritos") } }
             if (favoritos.isEmpty()) {
                 item {
                     Text(

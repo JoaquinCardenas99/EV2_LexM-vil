@@ -1,0 +1,78 @@
+[
+  {
+    "id": 1,
+    "codigo": "CÓDIGO CIVIL",
+    "titulo": "Código Civil de la República de Chile",
+    "categoria": "Civil",
+    "descripcion": "Material de demostración académica. Regula las relaciones jurídicas civiles entre personas.",
+    "articulos": [
+      {
+        "numero": "1",
+        "texto": "La ley es obligatoria tanto a los chilenos como a los extranjeros residentes en Chile."
+      },
+      {
+        "numero": "2",
+        "texto": "La ignorancia de la ley no sirve de excusa."
+      },
+      {
+        "numero": "3",
+        "texto": "Solo corresponde al legislador interpretar la ley de un modo generalmente obligatorio."
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "codigo": "CÓDIGO PENAL",
+    "titulo": "Código Penal de Chile",
+    "categoria": "Penal",
+    "descripcion": "Material de demostración académica. Establece los delitos y las penas aplicables en Chile.",
+    "articulos": [
+      {
+        "numero": "1",
+        "texto": "No hay crimen ni pena sin una ley previa, escrita, vigente y aplicable al delito."
+      },
+      {
+        "numero": "10",
+        "texto": "Son punibles los hechos realizados dolosa o culposamente."
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "codigo": "CONSTITUCIÓN POLÍTICA",
+    "titulo": "Constitución Política de la República de Chile",
+    "categoria": "Constitucional",
+    "descripcion": "Material de demostración académica. Norma fundamental que organiza el Estado y garantiza los derechos fundamentales.",
+    "articulos": [
+      {
+        "numero": "1",
+        "texto": "Las personas nacen libres e iguales en dignidad y derechos."
+      },
+      {
+        "numero": "5",
+        "texto": "La soberanía reside esencialmente en la Nación."
+      },
+      {
+        "numero": "19",
+        "texto": "La Constitución asegura a todas las personas: igualdad ante la ley."
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "codigo": "CÓDIGO DEL TRABAJO",
+    "titulo": "Código del Trabajo",
+    "categoria": "Laboral",
+    "descripcion": "Material de demostración académica. Regula las relaciones individuales y colectivas del trabajo.",
+    "articulos": [
+      {
+        "numero": "5",
+        "texto": "El trabajo es un derecho y un deber social."
+      },
+      {
+        "numero": "7",
+        "texto": "Es obligación del empleador respetar la dignidad del trabajador."
+      }
+    ]
+  }
+]

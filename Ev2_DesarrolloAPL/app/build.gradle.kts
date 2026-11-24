@@ -1,7 +1,12 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
 }
+
+val firmaArchivo = rootProject.file("keystore.properties")
+val firma = Properties().apply { if (firmaArchivo.exists()) firmaArchivo.inputStream().use { load(it) } }
 
 android {
     namespace = "duoc.example.EV2_Desarrollo"
@@ -13,14 +18,27 @@ android {
         applicationId = "duoc.example.EV2_Desarrollo"
         minSdk = 24
         targetSdk = 37
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 3
+        versionName = "1.1"
 
+        val apiUrl = providers.gradleProperty("LEXMOVIL_API_URL").orElse("http://10.0.2.2:8080/api/").get()
+        require(apiUrl.endsWith("/")) { "LEXMOVIL_API_URL debe terminar en /" }
+        buildConfigField("String", "API_BASE_URL", "\"${apiUrl}\"")
+        manifestPlaceholders["permitirHttpLocal"] = providers.gradleProperty("LEXMOVIL_ALLOW_HTTP").orElse("false").get()
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    signingConfigs {
+        if (firmaArchivo.exists()) create("entrega") {
+            storeFile = rootProject.file(firma.getProperty("storeFile"))
+            storePassword = firma.getProperty("storePassword")
+            keyAlias = firma.getProperty("keyAlias")
+            keyPassword = firma.getProperty("keyPassword")
+        }
+    }
     buildTypes {
         release {
+            if (firmaArchivo.exists()) signingConfig = signingConfigs.getByName("entrega")
             optimization {
                 enable = false
             }
@@ -32,10 +50,13 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 
 dependencies {
+    implementation("com.squareup.retrofit2:retrofit:2.11.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.11.0")
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.compose.material3)
@@ -53,6 +74,7 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.6")
 
     testImplementation(libs.junit)
+    testImplementation("com.squareup.okhttp3:mockwebserver:4.12.0")
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     androidTestImplementation(libs.androidx.espresso.core)

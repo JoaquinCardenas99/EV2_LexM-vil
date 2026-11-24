@@ -1,0 +1,19 @@
+CREATE TABLE IF NOT EXISTS usuarios (
+ id VARCHAR(36) PRIMARY KEY,
+ nombre_completo VARCHAR(120) NOT NULL,
+ rut VARCHAR(20) NOT NULL,
+ correo VARCHAR(254) NOT NULL UNIQUE,
+ tipo VARCHAR(20) NOT NULL,
+ password_hash VARCHAR(100) NOT NULL
+);
+CREATE TABLE IF NOT EXISTS sesiones (
+ token_hash VARCHAR(64) PRIMARY KEY,
+ usuario_id VARCHAR(36) NOT NULL REFERENCES usuarios(id),
+ expira TIMESTAMP WITH TIME ZONE NOT NULL
+);
+CREATE TABLE IF NOT EXISTS favoritos (
+ usuario_id VARCHAR(36) NOT NULL REFERENCES usuarios(id),
+ ley_id INT NOT NULL CHECK (ley_id BETWEEN 1 AND 4),
+ nota VARCHAR(2000) NOT NULL DEFAULT '',
+ PRIMARY KEY (usuario_id, ley_id)
+);

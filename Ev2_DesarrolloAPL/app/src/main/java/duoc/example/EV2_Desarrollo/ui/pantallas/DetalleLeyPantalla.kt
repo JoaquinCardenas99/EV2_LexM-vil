@@ -1,13 +1,5 @@
 package duoc.example.EV2_Desarrollo.ui.pantallas
 
-import android.content.ContentValues
-import android.content.Context
-import android.graphics.Paint
-import android.graphics.pdf.PdfDocument
-import android.os.Build
-import android.os.Environment
-import android.provider.MediaStore
-import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -35,14 +27,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import duoc.example.EV2_Desarrollo.viewmodel.LeyViewModel
-import java.io.File
-import java.io.FileOutputStream
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -53,7 +46,16 @@ fun DetalleLeyPantalla(
 ) {
     val ley by viewModel.leySeleccionada.collectAsState()
     val favoritos by viewModel.favoritos.collectAsState()
-    val context = LocalContext.current
+    val notas by viewModel.notas.collectAsState()
+    val mensaje by viewModel.mensaje.collectAsState()
+    val ocupado by viewModel.ocupado.collectAsState()
+    var nota by remember(leyId, notas[leyId]) { mutableStateOf(notas[leyId].orEmpty()) }
+    val documentos: duoc.example.EV2_Desarrollo.viewmodel.DocumentoViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
+    val mensajeDocumento by documentos.mensaje.collectAsState()
+    val guardando by documentos.ocupado.collectAsState()
+    val guardarPdf = androidx.activity.compose.rememberLauncherForActivityResult(
+        androidx.activity.result.contract.ActivityResultContracts.CreateDocument("application/pdf")
+    ) { uri -> if (uri != null) ley?.let { documentos.guardarPdf(uri, it) } }
 
     LaunchedEffect(leyId) {
         viewModel.seleccionarLey(leyId)
@@ -70,7 +72,7 @@ fun DetalleLeyPantalla(
                 },
                 actions = {
                     if (ley != null) {
-                        IconButton(onClick = { viewModel.toggleFavorito(ley!!.id) }) {
+                        IconButton(enabled = !ocupado, onClick = { viewModel.toggleFavorito(ley!!.id) }) {
                             Icon(
                                 if (favoritos.contains(ley!!.id)) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
                                 contentDescription = "Favorito",
@@ -88,6 +90,17 @@ fun DetalleLeyPantalla(
                 .padding(padding)
                 .padding(16.dp)
         ) {
+            mensajeDocumento?.let { Text(it) }
+            mensaje?.let {
+                Text(it)
+                Button(enabled = !ocupado, onClick = { viewModel.seleccionarLey(leyId) }) { Text("Reintentar") }
+            }
+            if (ocupado) androidx.compose.material3.LinearProgressIndicator(Modifier.fillMaxWidth())
+            if (leyId in favoritos) {
+                OutlinedTextField(value = nota, onValueChange = { if (it.length <= 2000) nota = it },
+                    label = { Text("Nota personal del favorito") }, modifier = Modifier.fillMaxWidth(), maxLines = 3)
+                Button(enabled = !ocupado, onClick = { viewModel.guardarNota(leyId, nota) }) { Text("Guardar nota") }
+            }
             ley?.let {
                 Text(
                     text = it.titulo,
@@ -106,7 +119,8 @@ fun DetalleLeyPantalla(
                 )
                 Spacer(modifier = Modifier.height(12.dp))
                 Button(
-                    onClick = { generarPdf(context, it) },
+                    enabled = !guardando,
+                    onClick = { guardarPdf.launch("${it.codigo.replace(" ", "_")}.pdf") },
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
@@ -147,105 +161,4 @@ fun DetalleLeyPantalla(
             }
         }
     }
-}
-
-private fun generarPdf(context: Context, ley: duoc.example.EV2_Desarrollo.model.Ley) {
-    val pdfDocument = PdfDocument()
-    val paint = Paint()
-    val tituloPaint = Paint()
-    tituloPaint.textSize = 16f
-    tituloPaint.isFakeBoldText = true
-    paint.textSize = 12f
-
-    var paginaNumero = 1
-    var y = 50f
-    val pageInfo = PdfDocument.PageInfo.Builder(595, 842, paginaNumero).create()
-    var pagina = pdfDocument.startPage(pageInfo)
-    var canvas = pagina.canvas
-
-    canvas.drawText(ley.codigo, 50f, y, tituloPaint)
-    y += 25
-    canvas.drawText(ley.titulo, 50f, y, paint)
-    y += 20
-    canvas.drawText("Categoría: ${ley.categoria}", 50f, y, paint)
-    y += 30
-
-    ley.articulos.forEach { articulo ->
-        if (y > 750f) {
-            pdfDocument.finishPage(pagina)
-            paginaNumero++
-            val nuevaPaginaInfo = PdfDocument.PageInfo.Builder(595, 842, paginaNumero).create()
-            pagina = pdfDocument.startPage(nuevaPaginaInfo)
-            canvas = pagina.canvas
-            y = 50f
-        }
-        canvas.drawText("Artículo ${articulo.numero}", 50f, y, tituloPaint)
-        y += 20
-        val texto = articulo.texto
-        val palabras = texto.split(" ")
-        var linea = ""
-        palabras.forEach { palabra ->
-            val prueba = if (linea.isEmpty()) palabra else "$linea $palabra"
-            if (paint.measureText(prueba) > 500f) {
-                if (y > 750f) {
-                    pdfDocument.finishPage(pagina)
-                    paginaNumero++
-                    val nuevaPaginaInfo = PdfDocument.PageInfo.Builder(595, 842, paginaNumero).create()
-                    pagina = pdfDocument.startPage(nuevaPaginaInfo)
-                    canvas = pagina.canvas
-                    y = 50f
-                }
-                canvas.drawText(linea, 50f, y, paint)
-                y += 18
-                linea = palabra
-            } else {
-                linea = prueba
-            }
-        }
-        if (linea.isNotEmpty()) {
-            if (y > 750f) {
-                pdfDocument.finishPage(pagina)
-                paginaNumero++
-                val nuevaPaginaInfo = PdfDocument.PageInfo.Builder(595, 842, paginaNumero).create()
-                pagina = pdfDocument.startPage(nuevaPaginaInfo)
-                canvas = pagina.canvas
-                y = 50f
-            }
-            canvas.drawText(linea, 50f, y, paint)
-            y += 25
-        }
-    }
-
-    pdfDocument.finishPage(pagina)
-
-    val nombreArchivo = "${ley.codigo.replace(" ", "_")}.pdf"
-    try {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            val contentValues = ContentValues().apply {
-                put(MediaStore.Files.FileColumns.DISPLAY_NAME, nombreArchivo)
-                put(MediaStore.Files.FileColumns.MIME_TYPE, "application/pdf")
-                put(MediaStore.Files.FileColumns.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS + "/LexMovil")
-            }
-            val uri = context.contentResolver.insert(MediaStore.Files.getContentUri("external"), contentValues)
-            uri?.let {
-                context.contentResolver.openOutputStream(it)?.use { outputStream ->
-                    pdfDocument.writeTo(outputStream)
-                }
-                Toast.makeText(context, "PDF guardado en Descargas/LexMovil", Toast.LENGTH_LONG).show()
-            }
-        } else {
-            val directorio = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "LexMovil")
-            if (!directorio.exists()) {
-                directorio.mkdirs()
-            }
-            val archivo = File(directorio, nombreArchivo)
-            val fos = FileOutputStream(archivo)
-            pdfDocument.writeTo(fos)
-            fos.close()
-            Toast.makeText(context, "PDF guardado en Descargas/LexMovil", Toast.LENGTH_LONG).show()
-        }
-    } catch (e: Exception) {
-        Toast.makeText(context, "Error al guardar PDF", Toast.LENGTH_SHORT).show()
-    }
-    pdfDocument.close()
 }
